@@ -3,14 +3,13 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - id: bruin-darwin
+  - id: bruin-darwin-amd
     binary: bruin
     ldflags:
       - -s -w -X main.version={{ .Env.VERSION }}
     main: ./
     goarch:
       - amd64
-      - arm64
     goos:
       - darwin
     env:
@@ -20,6 +19,22 @@ builds:
     flags:
       - -trimpath
  
+  - id: bruin-darwin-arm
+    binary: bruin
+    ldflags:
+      - -s -w -X main.version={{ .Env.VERSION }}
+    main: ./
+    goarch:
+      - arm64
+    goos:
+      - darwin
+    env:
+      - CC=o64-clang
+      - CXX=o64-clang++
+      - CGO_ENABLED=1
+    flags:
+      - -trimpath
+
   - id: bruin-linux-amd64
     binary: bruin
     main: ./
@@ -73,7 +88,8 @@ archives:
     builds:
       - bruin-linux-arm64
       - bruin-linux-amd64
-      - bruin-darwin
+      - bruin-darwin-amd
+      - bruin-darwin-arm
       - bruin-windows-amd64
     name_template: >-
       {{ .ProjectName }}_

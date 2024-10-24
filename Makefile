@@ -1,7 +1,7 @@
 NAME=bruin
 BUILD_DIR ?= bin
 BUILD_SRC=.
-
+CURDIR=$(shell pwd)
 NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
@@ -12,13 +12,39 @@ all: clean deps test build
 
 deps: tools
 	@printf "$(OK_COLOR)==> Installing dependencies$(NO_COLOR)\n"
-	@go mod vendor
+	@go mod tidy
 
-build:
-	@echo "$(OK_COLOR)==> Vendoring...$(NO_COLOR)"
-	@modvendor -copy="**/*.a **/*.h" -v
-	@echo "$(OK_COLOR)==> Building the application...$(NO_COLOR)"
-	@CGO_ENABLED=1 go build -v -ldflags="-s -w -X main.Version=$(or $(tag), dev-$(shell git describe --tags --abbrev=0))" -o "$(BUILD_DIR)/$(NAME)" "$(BUILD_SRC)"
+build: build-darwin build-linux build-windows
+
+build-darwin: build-darwin-amd build-darwin-arm
+
+build-darwin-amd:
+	@echo "$(OK_COLOR)==> Building the application for Darwin...$(NO_COLOR)"
+	docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src -w /src goreleaser/goreleaser-cross:v1.22 build --snapshot --clean  --id  bruin-darwin-amd --output /src/bin  --verbose
+
+build-darwin-arm:
+	@echo "$(OK_COLOR)==> Building the application for Darwin...$(NO_COLOR)"
+	docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src -w /src goreleaser/goreleaser-cross:v1.22 build --snapshot --clean  --id  bruin-darwin-arm --output /src/bin  --verbose
+
+
+build-linux: build-linux-amd build-linux-arm
+
+build-linux-amd:
+	@echo "$(OK_COLOR)==> Building the application for Linux...$(NO_COLOR)"
+	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-linux-amd64 --output /src/bin  --verbose
+
+build-linux-arm:
+	@echo "$(OK_COLOR)==> Building the application for Linux...$(NO_COLOR)"
+	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-linux-arm64 --output /src/bin  --verbose
+
+build-windows:
+	@echo "$(OK_COLOR)==> Building the application for Windows...$(NO_COLOR)"
+	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-windows-amd64 --output /src/bin  --verbose
+
+goreleaser:
+	@echo "$(OK_COLOR)==> Building the application for Windows...$(NO_COLOR)"
+	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 release  --snapshot --clean 
+
 
 clean:
 	@rm -rf ./bin
@@ -59,7 +85,13 @@ tools:
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 
+	@if ! command -v goreleaser > /dev/null ; then \
+		echo ">> [$@]: goreleaser not found: installing"; \
+		go install github.com/goreleaser/goreleaser/v2@latest; \
+	fi
+
 tools-update:
 	go install github.com/daixiang0/gci@latest; \
 	go install mvdan.cc/gofumpt@latest; \
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest;
+	go install github.com/goreleaser/goreleaser/v2@latest
