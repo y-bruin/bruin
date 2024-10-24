@@ -21,10 +21,12 @@ build-darwin: build-darwin-amd build-darwin-arm
 build-darwin-amd:
 	@echo "$(OK_COLOR)==> Building the application for Darwin...$(NO_COLOR)"
 	docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src -w /src goreleaser/goreleaser-cross:v1.22 build --snapshot --clean  --id  bruin-darwin-amd --output /src/bin  --verbose
+	cp dist/bruin-darwin-amd_darwin_amd64_v1/bruin bin/bruin
 
 build-darwin-arm:
 	@echo "$(OK_COLOR)==> Building the application for Darwin...$(NO_COLOR)"
 	docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src -w /src goreleaser/goreleaser-cross:v1.22 build --snapshot --clean  --id  bruin-darwin-arm --output /src/bin  --verbose
+	cp dist/bruin-darwin-arm_darwin_arm64_v1/bruin bruin
 
 
 build-linux: build-linux-amd build-linux-arm
@@ -32,14 +34,17 @@ build-linux: build-linux-amd build-linux-arm
 build-linux-amd:
 	@echo "$(OK_COLOR)==> Building the application for Linux...$(NO_COLOR)"
 	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-linux-amd64 --output /src/bin  --verbose
+	cp dist/bruin-linux-amd_linux_amd64_v1/bruin bruin
 
 build-linux-arm:
 	@echo "$(OK_COLOR)==> Building the application for Linux...$(NO_COLOR)"
 	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-linux-arm64 --output /src/bin  --verbose
+	cp dist/bruin-linux-arm_linux_arm64/bruin bruin
 
 build-windows:
 	@echo "$(OK_COLOR)==> Building the application for Windows...$(NO_COLOR)"
 	@docker run -it --rm -e VERSION=0.0.1  -v $(CURDIR):/src goreleaser/goreleaser-cross:v1.22 build  --snapshot --clean  --id  bruin-windows-amd64 --output /src/bin  --verbose
+	cp dist/bruin-windows-amd_windows_amd64_v1/bruin bruin
 
 goreleaser:
 	@echo "$(OK_COLOR)==> Building the application for Windows...$(NO_COLOR)"
