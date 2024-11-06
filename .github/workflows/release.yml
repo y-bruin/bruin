@@ -146,7 +146,7 @@ jobs:
 
   install-windows:
     runs-on: windows-latest
-    needs: Installer Script on Windows
+    name: Installer Script on Windows
     needs: release-windows
     defaults:
       run:
