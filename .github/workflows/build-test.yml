@@ -72,6 +72,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-embed-python-
       - run: make test
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          files: ./coverage.txt # optional
+          flags: unittests # optional
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+          verbose: true # optional (default = false)
       - run: make duckdb-test
         shell: bash
 
