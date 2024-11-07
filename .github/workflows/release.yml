@@ -145,9 +145,6 @@ jobs:
     runs-on: windows-latest
     name: Installer Script on Windows
     needs: release-windows
-    defaults:
-      run:
-        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v3
       - name: Use install script
