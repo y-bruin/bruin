@@ -144,6 +144,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    needs: [release-windows, release-unix]
     steps:
       - uses: actions/checkout@v3
       - name: Extract tag from ref
