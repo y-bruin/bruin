@@ -14,8 +14,9 @@ jobs:
         atrix: 
           - redshift
           - notion
-          - snowflake
-          - ducdb
+          - gorgias
+          - athena
+          - duckdb
           - firebase
     steps:
       - uses: actions/checkout@v2
