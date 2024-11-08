@@ -1,0 +1,34 @@
+name: Bruin Test
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        atrix: 
+          - redshift
+          - notion
+          - snowflake
+          - ducdb
+          - firebase
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: bruin-data/setup-bruin@main
+
+      - run: |
+          echo "Running validation for template: ${{ matrix.atrix }}"
+          bruin validate ./bruin-pipeline/${{ matrix.atrix }}
+        name: Validate Pipeline
+
+      - run: |
+          echo "Running format for template: ${{ matrix.atrix }}"
+          bruin format ./bruin-pipeline/${{ matrix.atrix }}
+        name: Format Pipeline
+
