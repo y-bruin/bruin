@@ -24,11 +24,11 @@ jobs:
 
       - run: |
           echo "Running validation for template: ${{ matrix.atrix }}"
-          bruin validate ./bruin-pipeline/${{ matrix.atrix }}
+          bruin validate ./templates/${{ matrix.atrix }}
         name: Validate Pipeline
 
       - run: |
           echo "Running format for template: ${{ matrix.atrix }}"
-          bruin format ./bruin-pipeline/${{ matrix.atrix }}
+          bruin format ./templates/${{ matrix.atrix }}
         name: Format Pipeline
 
